@@ -1,0 +1,43 @@
+name: Facebook 24/7 Auto Post (15 Groups + 2 News)
+
+on:
+  schedule:
+    # โพสต์สินค้า 15 กลุ่มต่อวัน: ทุก 1 ชม. ตั้งแต่ 08:00 - 22:00 น. (เวลาไทย) = 01:00 - 15:00 น. (UTC)
+    - cron: '0 1,2,3,4,5,6,7,8,9,10,11,12,13,14,15 * * *'
+    # โพสต์ข่าวสาร มข. 2 รอบต่อวัน: 08:30 และ 17:30 น. (เวลาไทย) = 01:30 และ 10:30 น. (UTC)
+    - cron: '30 1,10 * * *'
+  workflow_dispatch: # ปุ่มกดสั่งรันด้วยตนเองได้ทุกเวลาบนเว็บ GitHub
+
+jobs:
+  auto-post:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: 📥 ดึงโค้ดโปรเจกต์
+        uses: actions/checkout@v4
+
+      - name: ⚙️ ติดตั้ง Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+
+      - name: 📦 ติดตั้ง Dependencies
+        run: npm ci
+
+      - name: 🌐 ติดตั้ง Playwright Chromium
+        run: npx playwright install --with-deps chromium
+
+      - name: 🚀 รันระบบโพสต์อัตโนมัติ + ดันโพสต์
+        env:
+          FB_COOKIES: ${{ secrets.FB_COOKIES }}
+        run: node src/poster.js
+
+      - name: 📸 เก็บภาพหลักฐานการโพสต์ (Artifacts)
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: posting-proofs-${{ github.run_id }}
+          path: proofs/
+          retention-days: 7

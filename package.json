@@ -1,0 +1,13 @@
+{
+  "name": "en-enterprise-autopost-github",
+  "version": "1.0.0",
+  "description": "24/7 Automated Facebook Posting & Bumping for En Enterprise using GitHub Actions",
+  "main": "src/poster.js",
+  "scripts": {
+    "start": "node src/poster.js",
+    "test": "node src/poster.js 0"
+  },
+  "dependencies": {
+    "playwright": "^1.49.0"
+  }
+}
