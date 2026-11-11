@@ -21,10 +21,9 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 20
-          cache: 'npm'
 
       - name: 📦 ติดตั้ง Dependencies
-        run: npm ci
+        run: npm install
 
       - name: 🌐 ติดตั้ง Playwright Chromium
         run: npx playwright install --with-deps chromium
